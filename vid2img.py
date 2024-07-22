@@ -10,7 +10,7 @@ def extract_and_crop_images_from_video(video_path, output_folder, frame_paramete
     frame_count = 0
     extracted_count = 0
     
-    while True:
+    while True: 
         ret, frame = cap.read()
         
         if not ret:

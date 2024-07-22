@@ -1,6 +1,17 @@
 import cv2
 import os
 
+def format_frame_count(frame_count):
+    if frame_count < 10:
+        frame_count = '000' + str(frame_count)
+    elif frame_count < 100:
+        frame_count = '00' + str(frame_count)
+    elif frame_count < 1000:
+        frame_count = '0' + str(frame_count)
+    else:
+        pass
+    return frame_count
+
 def extract_and_crop_images_from_video(video_path, output_folder, frame_parameter, crop):
     cap = cv2.VideoCapture(video_path)
     
@@ -35,7 +46,8 @@ def extract_and_crop_images_from_video(video_path, output_folder, frame_paramete
             square_frame = frame
         
         if frame_count % frame_parameter == 0:
-            output_path = f"{video_output_folder}/frame_{frame_count}.jpg"
+            formatted_frame_count = format_frame_count(frame_count)
+            output_path = f"{video_output_folder}/frame_{formatted_frame_count}.jpg"
             cv2.imwrite(output_path, square_frame)
             extracted_count += 1
             print(f"Extracted frame {frame_count} to {output_path}")

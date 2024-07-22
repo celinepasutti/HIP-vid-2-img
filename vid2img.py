@@ -1,7 +1,6 @@
 import cv2
 
-def extract_and_crop_images_from_video(video_path, output_folder, x):
-    # Open the video file
+def extract_and_crop_images_from_video(video_path, output_folder, frame_parameter):
     cap = cv2.VideoCapture(video_path)
     
     if not cap.isOpened():
@@ -12,26 +11,21 @@ def extract_and_crop_images_from_video(video_path, output_folder, x):
     extracted_count = 0
     
     while True:
-        # Read a frame from the video
         ret, frame = cap.read()
         
         if not ret:
             break
         
-        # Crop the frame to a square aspect ratio
+        # crop to a square
         height, width, _ = frame.shape
-        if height > width:
-            # Vertical crop (tall video)
+        if height > width: # vertical
             offset = (height - width) // 2
             square_frame = frame[offset:offset+width, :]
-        else:
-            # Horizontal crop (wide video)
+        else: # horizontal
             offset = (width - height) // 2
             square_frame = frame[:, offset:offset+height]
         
-        # Check if the current frame number is a multiple of x
-        if frame_count % x == 0:
-            # Save the cropped frame as an image
+        if frame_count % frame_parameter == 0:
             output_path = f"{output_folder}/frame_{frame_count}.jpg"
             cv2.imwrite(output_path, square_frame)
             extracted_count += 1
@@ -42,10 +36,9 @@ def extract_and_crop_images_from_video(video_path, output_folder, x):
     cap.release()
     print(f"Extraction complete. Extracted {extracted_count} frames.")
 
-# Example usage
-video_path = 'path/to/your/video.mp4'
-output_folder = 'path/to/output/folder'
-x = 10  # Extract an image every 10 frames
+video_path = './media/videos/makeup.MOV'
+output_folder = './media/images'
+frame_parameter = 10
 
-extract_and_crop_images_from_video(video_path, output_folder, x)
+extract_and_crop_images_from_video(video_path, output_folder, frame_parameter)
 

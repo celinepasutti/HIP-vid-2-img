@@ -67,7 +67,6 @@ def process_videos_in_folder(folder_path, output_folder, frame_parameter, crop):
 folder_path = './media/videos'
 output_folder = './media/images'
 frame_parameter = 10
-crop = False
 
-process_videos_in_folder(folder_path, output_folder, frame_parameter, crop)
+process_videos_in_folder(folder_path, output_folder, frame_parameter, crop=False)
 

@@ -68,4 +68,3 @@ folder_path = './media/videos'
 output_folder = './media/images'
 
 process_videos_in_folder(folder_path, output_folder, num_photos=10, crop=False)
-

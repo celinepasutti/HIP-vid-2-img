@@ -2,22 +2,23 @@ import cv2
 import os
 
 def format_frame_count(frame_count):
-    if frame_count < 10:
-        frame_count = '000' + str(frame_count)
-    elif frame_count < 100:
-        frame_count = '00' + str(frame_count)
-    elif frame_count < 1000:
-        frame_count = '0' + str(frame_count)
-    else:
-        pass
-    return frame_count
+    return str(frame_count).zfill(4)
 
-def extract_and_crop_images_from_video(video_path, output_folder, frame_parameter, crop):
+def extract_and_crop_images_from_video(video_path, output_folder, num_photos, crop):
     cap = cv2.VideoCapture(video_path)
     
     if not cap.isOpened():
         print(f"Error: Could not open video file {video_path}.")
         return
+    
+    # total frames
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    if total_frames < num_photos:
+        print(f"Warning: The video {video_path} has fewer frames ({total_frames}) than the number of photos requested ({num_photos}).")
+        return
+
+    # interval
+    frame_interval = total_frames // num_photos
     
     frame_count = 0
     extracted_count = 0
@@ -33,21 +34,20 @@ def extract_and_crop_images_from_video(video_path, output_folder, frame_paramete
         if not ret:
             break
         
-        if crop:
-            # crop to a square
-            height, width, _ = frame.shape
-            if height > width:  # vertical
-                offset = (height - width) // 2
-                square_frame = frame[offset:offset+width, :]
-            else:  # horizontal
-                offset = (width - height) // 2
-                square_frame = frame[:, offset:offset+height]
-        else:
-            square_frame = frame
-        
-        if frame_count % frame_parameter == 0:
-            formatted_frame_count = format_frame_count(frame_count)
-            output_path = f"{video_output_folder}/frame_{formatted_frame_count}.jpg"
+        if frame_count % frame_interval == 0 and extracted_count < num_photos:
+            if crop:
+                # crop
+                height, width, _ = frame.shape
+                if height > width:  # vertical
+                    offset = (height - width) // 2
+                    square_frame = frame[offset:offset+width, :]
+                else:  # horizontal
+                    offset = (width - height) // 2
+                    square_frame = frame[:, offset:offset+height]
+            else:
+                square_frame = frame
+            
+            output_path = f"{video_output_folder}/frame_{frame_count}.jpg"
             cv2.imwrite(output_path, square_frame)
             extracted_count += 1
             print(f"Extracted frame {frame_count} to {output_path}")
@@ -57,16 +57,15 @@ def extract_and_crop_images_from_video(video_path, output_folder, frame_paramete
     cap.release()
     print(f"Extraction complete for {video_path}. Extracted {extracted_count} frames.")
 
-def process_videos_in_folder(folder_path, output_folder, frame_parameter, crop):
+def process_videos_in_folder(folder_path, output_folder, num_photos, crop):
     for filename in os.listdir(folder_path):
-        if filename.endswith(('.mp4', '.mov', '.MOV')):
+        if filename.endswith(('.mp4', '.mov', '.avi', '.mkv', '.MOV')):
             video_path = os.path.join(folder_path, filename)
-            extract_and_crop_images_from_video(video_path, output_folder, frame_parameter, crop)
+            extract_and_crop_images_from_video(video_path, output_folder, num_photos, crop)
 
-# usage
+
 folder_path = './media/videos'
 output_folder = './media/images'
-frame_parameter = 10
 
-process_videos_in_folder(folder_path, output_folder, frame_parameter, crop=False)
+process_videos_in_folder(folder_path, output_folder, num_photos=10, crop=False)
 

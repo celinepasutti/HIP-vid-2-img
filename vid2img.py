@@ -59,7 +59,7 @@ def extract_and_crop_images_from_video(video_path, output_folder, num_photos, cr
 
 def process_videos_in_folder(folder_path, output_folder, num_photos, crop):
     for filename in os.listdir(folder_path):
-        if filename.endswith(('.mp4', '.mov', '.avi', '.mkv', '.MOV')):
+        if filename.endswith(('.mp4', '.mov', '.MOV')):
             video_path = os.path.join(folder_path, filename)
             extract_and_crop_images_from_video(video_path, output_folder, num_photos, crop)
 

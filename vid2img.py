@@ -46,8 +46,8 @@ def extract_and_crop_images_from_video(video_path, output_folder, num_photos, cr
                     square_frame = frame[:, offset:offset+height]
             else:
                 square_frame = frame
-            
-            output_path = f"{video_output_folder}/frame_{frame_count}.jpg"
+            formatted_frame = format_frame_count(frame_count)
+            output_path = f"{video_output_folder}/frame_{formatted_frame}.jpg"
             cv2.imwrite(output_path, square_frame)
             extracted_count += 1
             print(f"Extracted frame {frame_count} to {output_path}")
@@ -67,4 +67,4 @@ def process_videos_in_folder(folder_path, output_folder, num_photos, crop):
 folder_path = './media/videos'
 output_folder = './media/images'
 
-process_videos_in_folder(folder_path, output_folder, num_photos=10, crop=False)
+process_videos_in_folder(folder_path, output_folder, num_photos=100, crop=False)
